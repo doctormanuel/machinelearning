@@ -1,7 +1,7 @@
 ---
 title: "Prediction Assignment Writeup"
 author: "Manuel"
-date: "11/23/2020"
+date: "11/25/2020"
 output: html_document
 ---
 
@@ -102,7 +102,7 @@ trainingdata_pca_all=cbind(training_pca_all,classe=training$classe)
 ```
 
 We now use that dataset to train three different models: one with trees, using *rpart*; another one with random forest, using *rf*; and the last one a gradient method, *gbm*.
-```{r, cache=TRUE}
+```{r, cache=TRUE, results='hide'}
 modelrpartpca=train(classe~.,method="rpart",data=trainingdata_pca_all)
 modelrfpca=train(classe~.,method="rf",data=trainingdata_pca_all)
 modelgbmpca=train(classe~.,method="gbm",data=trainingdata_pca_all)
@@ -116,7 +116,7 @@ length(indstrongcorrelation)
 ```
 
 We apply the same Principal Component Analysis as before, but removing those seven variables. We create a new dataset containing the PCA-preprocessed training data and train the same three models as before.
-```{r, cache=TRUE}
+```{r, cache=TRUE, results='hide'}
 pcapp_exccorr=preProcess(training[,-c(indstrongcorrelation,54)],method="pca")
 training_pca_exccorr=predict(pcapp_exccorr,training[,-c(indstrongcorrelation,54)])
 testing_pca_exccorr=predict(pcapp_exccorr,testing[,-c(indstrongcorrelation,54)])
@@ -138,7 +138,7 @@ sum(predict(modelrfpcaexc,newdata=testing_pca_exccorr)==testing$classe)/ntest*10
 sum(predict(modelgbmpcaexc,newdata=testing_pca_exccorr)==testing$classe)/ntest*100
 ```
 
-We observe that the highest accuracy (99.03%) is obtained for the random forest model without removing highly inter-correlated variables. We now use that model to predict the *classe* variable fo the prediction data.
+We observe that the highest accuracy (98.92%) is obtained for the random forest model without removing highly inter-correlated variables. We now use that model to predict the *classe* variable fo the prediction data.
 ```{r}
 predict(modelrfpca,newdata=prediction_pca_all)
 ```
